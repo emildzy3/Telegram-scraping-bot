@@ -1,0 +1,12 @@
+
+.DS_Store
+.idea
+.vscode
+*.log
+*.pyc
+**/__pycache__/
+config.py
+test.py
+venv
+
+

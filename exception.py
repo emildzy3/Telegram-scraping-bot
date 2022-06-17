@@ -1,0 +1,3 @@
+
+class CantGetNews(Exception):
+    """"""

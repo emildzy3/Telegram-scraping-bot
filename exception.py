@@ -6,3 +6,7 @@ class CantGetNews(Exception):
 class CantConnectToServer(Exception):
     """The program cannot connect to the server"""
     pass
+
+class CantGetCourse(Exception):
+    """Crypto coin parsing error"""
+    pass

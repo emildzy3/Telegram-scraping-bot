@@ -4,3 +4,5 @@ LIST_NEWS_SOURCE = [
     'https://lenta.ru/rss/top7'
 ]
 COUNT_NEWS = 3
+URL_CRYPTO_EXCHANGE = 'https://coinmarketcap.com/'
+COUNT_CRYPTO_COIN = 3

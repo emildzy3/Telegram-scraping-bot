@@ -6,7 +6,7 @@ from aiogram.utils.markdown import hitalic, hbold, hunderline, hlink
 from config import token
 from aiogram.dispatcher.filters import Text
 from aiogram.utils.markdown import hbold
-from services.coin_rate.crypto_parse import get_crypto_course
+from services.coin_rate.crypto_course import get_crypto_course
 from services.news.news import get_list_news
 
 logging.basicConfig(level=logging.INFO)
@@ -45,13 +45,13 @@ async def get_news(message: types.Message):
 @dp.message_handler(Text(equals="Топ 3 криптовалюты 💸"))
 async def get_crypto(message: types.Message):
     await message.answer(text='Собираю данные о валюте для вас...')
-    crypto_dict = get_crypto_course()
-
-    for coin in crypto_dict:
-        result = \
-            f'{hbold(coin["name"])} >>> {coin["price"]}$ \n' \
-            f'Изменение за 24 часа : {coin["changes_24_hours"]}'
-        await message.answer(result)
+    crypto_list = get_crypto_course()
+    for coin in crypto_list:
+        for element in coin.info:
+            result = \
+                f'{hbold(coin.name)} >>> {element.price}$ \n' \
+                f'Изменение за 24 часа : {element.changes_24_hours}'
+            await message.answer(result)
 
 
 if __name__ == '__main__':

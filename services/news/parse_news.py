@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from bs4 import BeautifulSoup, ResultSet, PageElement
+from bs4 import BeautifulSoup, ResultSet
 
+from exception import CantGetNews
 from settings import COUNT_NEWS
 
 Url = str
@@ -44,35 +45,52 @@ def _get_list_news(soup: BeautifulSoup) -> list[News]:
 
 
 def _parse_name_source(soup: BeautifulSoup) -> str:
-    source_name = soup.find('channel').title.text
-    return source_name
+    try:
+        return soup.find('channel').title.text
+    except AttributeError:
+        raise CantGetNews
 
 
 def _get_last_news(soup: BeautifulSoup) -> ResultSet:
     first_news = soup.find_all('item')[0:COUNT_NEWS]
+    if not len(first_news):
+        raise CantGetNews
     return first_news
 
 
 def _parse_title(first_news: BeautifulSoup) -> str:
-    title = first_news.find('title').text
-    return title
+    try:
+        return first_news.find('title').text
+    except AttributeError:
+        raise CantGetNews
 
 
 def _parse_time(first_news: BeautifulSoup) -> datetime:
-    dateString = str(' '.join(first_news.find('pubDate').text.split(' ')[1:5]))
     dateFormatter = "%d %b %Y %H:%M:%S"
-    return datetime.strptime(dateString, dateFormatter)
+    try:
+        dateString = str(' '.join(first_news.find('pubDate').text.split(' ')[1:5]))
+    except AttributeError:
+        raise CantGetNews
+    try:
+        return datetime.strptime(dateString, dateFormatter)
+    except ValueError:
+        raise CantGetNews
 
 
 def _parse_description(first_news: BeautifulSoup) -> str:
-    return first_news.find('description').text.strip()
+    try:
+        return first_news.find('description').text.strip()
+    except AttributeError:
+        raise CantGetNews
 
 
 def _parse_link(first_news: BeautifulSoup) -> str:
-    return first_news.find('link').text
-
+    try:
+        return first_news.find('link').text
+    except AttributeError:
+        raise CantGetNews
 
 if __name__ == '__main__':
-    from services.news.get_news_RSS import get_html_page
+    from services.get_HTMl_or_RSS import get_html_page
 
     print(parse_list_news(get_html_page('https://lenta.ru/rss/top7')))

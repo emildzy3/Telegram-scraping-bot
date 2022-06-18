@@ -2,7 +2,7 @@ import requests
 
 
 def get_html_page(url: str) -> str:
-    """RSS request service"""
+    """Service for receiving HTML/XML pages"""
     headers = _get_user_agent()
     response = requests.get(url, headers=headers)
     if response.ok:

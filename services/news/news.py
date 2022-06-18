@@ -1,7 +1,6 @@
-from services.info_formatter import print_news
-from services.news.get_news_RSS import get_html_page
+from services.get_HTMl_or_RSS import get_html_page
 from services.news.parse_news import parse_list_news, ListNews, News
-from settings import LIST_NEWS_SOURCE, COUNT_NEWS
+from settings import LIST_NEWS_SOURCE
 
 
 def get_list_news() -> list[ListNews, News]:

@@ -10,3 +10,5 @@ test.py
 venv
 
 
+/services/news/.mypy_cache/
+**/.mypy_cache/

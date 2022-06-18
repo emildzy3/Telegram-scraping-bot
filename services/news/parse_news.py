@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Union
 
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup, ResultSet, PageElement
 
 from settings import COUNT_NEWS
 
@@ -11,6 +10,7 @@ Url = str
 
 @dataclass
 class News:
+    title: str
     publication_time: datetime
     description: str
     link_news: Url
@@ -31,40 +31,48 @@ def parse_list_news(raw_data: str) -> ListNews:
     )
 
 
-def _get_list_news(soup: Union[BeautifulSoup, BeautifulSoup]) -> list[News]:
+def _get_list_news(soup: BeautifulSoup) -> list[News]:
     fresh_news = _get_last_news(soup)
     list_news = []
-    for news in fresh_news:
+    for first_news in fresh_news:
         list_news.append(News(
-            publication_time=_parse_time(news),
-            description=_parse_description(news),
-            link_news=_parse_link(news)))
+            title=_parse_title(first_news),
+            publication_time=_parse_time(first_news),
+            description=_parse_description(first_news),
+            link_news=_parse_link(first_news)))
     return list_news
 
 
-def _get_last_news(soup: Union[BeautifulSoup, BeautifulSoup]) -> ResultSet:
-    first_three_news = soup.find_all('item')[0:COUNT_NEWS]
-    return first_three_news
-
-
-def _parse_name_source(soup: Union[BeautifulSoup, BeautifulSoup]) -> str:
+def _parse_name_source(soup: BeautifulSoup) -> str:
     source_name = soup.find('channel').title.text
     return source_name
 
 
-def _parse_time(first_three_news: Union[BeautifulSoup, BeautifulSoup]) -> datetime:
-    dateString = str(' '.join(first_three_news.find('pubDate').text.split(' ')[1:5]))
+def _get_last_news(soup: BeautifulSoup) -> ResultSet:
+    first_news = soup.find_all('item')[0:COUNT_NEWS]
+    return first_news
+
+
+def _parse_title(first_news: BeautifulSoup) -> str:
+    title = first_news.find('title').text
+    return title
+
+
+def _parse_time(first_news: BeautifulSoup) -> datetime:
+    dateString = str(' '.join(first_news.find('pubDate').text.split(' ')[1:5]))
     dateFormatter = "%d %b %Y %H:%M:%S"
     return datetime.strptime(dateString, dateFormatter)
 
 
-def _parse_description(first_three_news: Union[BeautifulSoup, BeautifulSoup]) -> str:
-    return first_three_news.find('description').text.strip()
+def _parse_description(first_news: BeautifulSoup) -> str:
+    return first_news.find('description').text.strip()
 
 
-def _parse_link(first_three_news: Union[BeautifulSoup, BeautifulSoup]) -> str:
-    return first_three_news.find('link').text
+def _parse_link(first_news: BeautifulSoup) -> str:
+    return first_news.find('link').text
 
 
 if __name__ == '__main__':
-    pass
+    from services.news.get_news_RSS import get_html_page
+
+    print(parse_list_news(get_html_page('https://lenta.ru/rss/top7')))

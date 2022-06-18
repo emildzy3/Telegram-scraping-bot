@@ -1,5 +1,7 @@
 import requests
 
+from exception import CantConnectToServer
+
 
 def get_html_page(url: str) -> str:
     """Service for receiving HTML/XML pages"""
@@ -7,7 +9,7 @@ def get_html_page(url: str) -> str:
     response = requests.get(url, headers=headers)
     if response.ok:
         return response.text
-    raise
+    raise CantConnectToServer
 
 
 def _get_user_agent() -> dict[str, str]:

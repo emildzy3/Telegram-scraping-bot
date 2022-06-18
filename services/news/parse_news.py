@@ -90,7 +90,7 @@ def _parse_link(first_news: BeautifulSoup) -> str:
     except AttributeError:
         raise CantGetNews
 
+
 if __name__ == '__main__':
     from services.get_HTMl_or_RSS import get_html_page
-
     print(parse_list_news(get_html_page('https://lenta.ru/rss/top7')))
